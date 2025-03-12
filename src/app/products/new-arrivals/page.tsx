@@ -92,7 +92,7 @@ const itemVariants = (index: number) => ({
     transition: {
       duration: 0.8,
       ease: "easeOut",
-      delay: index * 0.1, // Cascading delay based on index
+      delay: index * 0.1,
     },
   },
 });

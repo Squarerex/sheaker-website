@@ -210,7 +210,7 @@ const AccountSettingsPage = () => {
   };
 
   return (
-    <section className="bg-[#E5E5E5] min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+    <section className="bg-[#E5E5E5] min-h-screen py-[10rem] px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div

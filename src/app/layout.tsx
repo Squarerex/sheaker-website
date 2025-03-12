@@ -2,6 +2,8 @@ import { Urbanist } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import DynamicBreadcrumbs from "@/components/common/DynamicBreadcrumb";
+
 
 const urbanist = Urbanist({
   subsets: ["latin"],
@@ -25,6 +27,7 @@ export default function RootLayout({
         className={`${urbanist.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <Header />
+        <DynamicBreadcrumbs />
         {children}
         <Footer />
       </body>

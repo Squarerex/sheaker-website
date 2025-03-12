@@ -9,6 +9,12 @@ import {
   FaCcVisa,
   FaCcMastercard,
   FaCcPaypal,
+  FaLock,
+  FaShieldAlt,
+  FaCheckCircle,
+  FaApple,
+  FaGoogle,
+  FaCreditCard
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -62,7 +68,6 @@ const Footer = () => {
             <ul className="space-y-2">
               {[
                 { name: "Shop", path: "/shop" },
-                // { name: "Deals", path: "/deals" },
                 { name: "FAQ", path: "/faqs" },
                 { name: "Contact", path: "/contact" },
               ].map((link) => (
@@ -176,25 +181,49 @@ const Footer = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+          className="space-y-6"
         >
-          {/* Copyright */}
-          <motion.p variants={itemVariants} className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} Sheaker Deals. All rights reserved.
+          {/* Privacy Policy */}
+          <motion.p variants={itemVariants} className="text-gray-300 text-sm text-center">
+            We value your privacy. Your personal and payment information is securely stored and never shared.{" "}
+            <Link href="/privacy-policy" className="text-[#FB7E11] hover:underline">
+              Privacy Policy
+            </Link>
           </motion.p>
 
           {/* Payment Methods */}
-          <motion.div variants={itemVariants} className="flex space-x-4">
-            {[FaCcVisa, FaCcMastercard, FaCcPaypal].map((Icon, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.2, y: -5 }}
-                className="text-gray-300 hover:text-[#FB7E11] transition-all"
-              >
-                <Icon className="text-2xl" />
-              </motion.div>
-            ))}
+          <motion.div variants={itemVariants} className="flex justify-center space-x-4">
+            <FaCcVisa className="text-2xl text-gray-300 hover:text-[#FB7E11] transition-all" />
+            <FaCcMastercard className="text-2xl text-gray-300 hover:text-[#FB7E11] transition-all" />
+            <FaCcPaypal className="text-2xl text-gray-300 hover:text-[#FB7E11] transition-all" />
+            <FaApple className="text-2xl text-gray-300 hover:text-[#FB7E11] transition-all" />
+            <FaGoogle className="text-2xl text-gray-300 hover:text-[#FB7E11] transition-all" />
           </motion.div>
+
+          {/* Trust Badges */}
+          <motion.div variants={itemVariants} className="flex justify-center gap-6 flex-wrap">
+            <div className="flex items-center gap-1">
+              <FaLock className="text-[#FB7E11]" />
+              <span className="text-xs text-gray-300">SSL Encryption</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <FaCreditCard className="text-[#FB7E11]" />
+              <span className="text-xs text-gray-300">Secure Payments</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <FaShieldAlt className="text-[#FB7E11]" />
+              <span className="text-xs text-gray-300">Privacy Protection</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <FaCheckCircle className="text-[#FB7E11]" />
+              <span className="text-xs text-gray-300">Money-Back Guarantee</span>
+            </div>
+          </motion.div>
+
+          {/* Copyright */}
+          <motion.p variants={itemVariants} className="text-gray-400 text-sm text-center">
+            © {new Date().getFullYear()} Sheaker Deals. All rights reserved.
+          </motion.p>
         </motion.div>
       </div>
     </footer>

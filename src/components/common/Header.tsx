@@ -12,7 +12,11 @@ import {
   FaUserCog,
   FaSignInAlt,
   FaUserPlus,
-  FaLink 
+  FaLink,
+  FaFilter,
+  FaTrash,
+  FaPlus,
+  FaMinus
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import headerLogo from "../../../public/Sheaker_orange_portrait_lockup_1.jpg";
@@ -34,6 +38,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import HeaderNavbar from "./HeaderNav";
 
 const Header = () => {
@@ -41,32 +52,31 @@ const Header = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isWishlistDrawerOpen, setIsWishlistDrawerOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchFilters, setSearchFilters] = useState({
+    category: "",
+    priceRange: "",
+    brand: "",
+    query: ""
+  });
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
   const toggleCartDrawer = () => setIsCartDrawerOpen(!isCartDrawerOpen);
-  const toggleWishlistDrawer = () =>
-    setIsWishlistDrawerOpen(!isWishlistDrawerOpen);
+  const toggleWishlistDrawer = () => setIsWishlistDrawerOpen(!isWishlistDrawerOpen);
+  const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
 
-  // Demo cart data
+  // Filter options
+  const categories = ["All", "Running", "Casual", "Sports", "Formal"];
+  const priceRanges = ["All", "0-50", "50-100", "100-200", "200+"];
+  const brands = ["All", "Nike", "Adidas", "Puma", "Reebok", "New Balance"];
+
+  // Demo cart and wishlist data remains the same
   const cartItems = [
-    {
-      id: 1,
-      name: "Running Shoes",
-      price: 59.99,
-      quantity: 1,
-      image: headerLogo,
-    },
-    {
-      id: 2,
-      name: "Casual T-Shirt",
-      price: 19.99,
-      quantity: 2,
-      image: headerLogo,
-    },
+    { id: 1, name: "Running Shoes", price: 59.99, quantity: 1, image: headerLogo },
+    { id: 2, name: "Casual T-Shirt", price: 19.99, quantity: 2, image: headerLogo },
   ];
 
-  // Demo wishlist data
   const wishlistItems = [
     { id: 1, name: "Running Shoes", price: 59.99, image: headerLogo },
     { id: 2, name: "Casual T-Shirt", price: 19.99, image: headerLogo },
@@ -77,14 +87,29 @@ const Header = () => {
     0
   );
 
+  const handleSearchFilterChange = (key:string, value: string) => {
+    setSearchFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Animation variants
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
     <header className="bg-gradient-to-r from-[#FB7E11] to-[#E56E00] text-white shadow-lg fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center focus:outline-none rounded"
-        >
+        <Link href="/" className="flex items-center focus:outline-none rounded">
           <Image
             src={headerLogo}
             alt="Sheaker Logo"
@@ -95,23 +120,7 @@ const Header = () => {
           />
         </Link>
 
-        {/* Search Bar */}
-        <div className="hidden md:flex flex-grow mx-6 max-w-xl relative">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            className="w-full px-5 py-2.5 rounded-full text-[#1F1F1F] bg-white shadow-sm transition-all duration-300"
-            aria-label="Search for products"
-          />
-          <button
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4D0A51] hover:text-[#0836C1] transition-all focus:outline-none"
-            aria-label="Search"
-          >
-            <FaSearch size={20} />
-          </button>
-        </div>
-
-        {/* User Actions */}
+        {/* Search Bar with Filters - Desktop */}
         <div className="hidden md:flex items-center space-x-4">
           {/* User Dropdown */}
           <div className="relative">
@@ -131,7 +140,7 @@ const Header = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 bg-white text-[#1F1F1F] shadow-xl rounded-lg w-48 py-2 border border-gray-100"
+                  className="absolute right-0 mt-2 bg-white text-[#1F1F1F] shadow-xl rounded-lg w-48 py-2 border border-gray-100 z-90"
                 >
                   <Link
                     href="/my-orders"
@@ -169,25 +178,35 @@ const Header = () => {
           {/* Wishlist */}
           <button
             onClick={toggleWishlistDrawer}
-            className="p-2 rounded-full hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            className="p-2 rounded-full hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 relative"
             aria-label="Open wishlist"
           >
             <FaHeart size={18} />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <motion.span 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+            >
               {wishlistItems.length}
-            </span>
+            </motion.span>
           </button>
 
           {/* Cart Drawer */}
           <button
             onClick={toggleCartDrawer}
-            className="p-2 rounded-full hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            className="p-2 rounded-full hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 relative"
             aria-label="Open cart"
           >
             <FaShoppingCart size={18} />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <motion.span 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+            >
               {cartItems.length}
-            </span>
+            </motion.span>
           </button>
         </div>
 
@@ -211,196 +230,348 @@ const Header = () => {
             transition={{ duration: 0.3 }}
             className="md:hidden bg-[#FB7E11] text-white shadow-lg"
           >
-            <div className="flex flex-col space-y-3 p-4">
-              <Link
-                href="/"
-                className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
-              >
-                Home
-              </Link>
-              <Link
-                href="/shop"
-                className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
-              >
-                Products
-              </Link>
-              <Link
-                href="/hot-deals"
-                className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
-              >
-                Deals
-              </Link>
-              <Link
-                href="/about-us"
-                className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
-              >
-                Contact
-              </Link>
-              <div className="flex flex-col space-y-3 pt-2">
+           <div className="flex flex-col space-y-3 p-4">
+            {/* Existing navigation links */}
+            <Link
+              href="/"
+              className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
+            >
+              Home
+            </Link>
+            <Link
+              href="/shop"
+              className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
+            >
+              Products
+            </Link>
+            <Link
+              href="/hot-deals"
+              className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
+            >
+              Deals
+            </Link>
+            <Link
+              href="/about-us"
+              className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-medium hover:text-[#FB7E11] transition-all px-2 py-1 rounded"
+            >
+              Contact
+            </Link>
+
+            {/* Mobile Search with Filters */}
+            <div className="flex flex-col space-y-3 pt-2">
+              <div className="relative">
                 <input
                   type="text"
                   placeholder="Search..."
                   className="w-full px-4 py-2 rounded-full text-[#1F1F1F] bg-white focus:outline-none focus:ring-2 focus:ring-[#0836C1] shadow-sm transition-all"
                   aria-label="Search for products"
+                  value={searchFilters.query}
+                  onChange={(e) => handleSearchFilterChange("query", e.target.value)}
                 />
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={toggleUserDropdown}
-                    className="p-2 rounded-full hover:bg-white/20 transition-all"
-                    aria-label="User menu"
+                <button
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4D0A51] hover:text-[#0836C1]"
+                  onClick={toggleFilter}
+                >
+                  <FaFilter size={20} />
+                </button>
+              </div>
+
+              {isFilterOpen && (
+                <div className="space-y-3 bg-white/10 p-3 rounded-lg">
+                  <Select
+                    value={searchFilters.category}
+                    onValueChange={(value) => handleSearchFilterChange("category", value)}
                   >
-                    <FaUser size={18} />
-                  </button>
-                  <button
-                    onClick={toggleWishlistDrawer}
-                    className="p-2 rounded-full hover:bg-white/20 transition-all"
-                    aria-label="Open wishlist"
+                    <SelectTrigger className="bg-white text-[#1F1F1F]">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat.toLowerCase()}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={searchFilters.priceRange}
+                    onValueChange={(value) => handleSearchFilterChange("priceRange", value)}
                   >
-                    <FaHeart size={18} />
-                  </button>
-                  <button
-                    onClick={toggleCartDrawer}
-                    className="p-2 rounded-full hover:bg-white/20 transition-all"
-                    aria-label="Open cart"
+                    <SelectTrigger className="bg-white text-[#1F1F1F]">
+                      <SelectValue placeholder="Price Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {priceRanges.map((range) => (
+                        <SelectItem key={range} value={range.toLowerCase()}>
+                          {range}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={searchFilters.brand}
+                    onValueChange={(value) => handleSearchFilterChange("brand", value)}
                   >
-                    <FaShoppingCart size={18} />
-                  </button>
+                    <SelectTrigger className="bg-white text-[#1F1F1F]">
+                      <SelectValue placeholder="Brand" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brands.map((brand) => (
+                        <SelectItem key={brand} value={brand.toLowerCase()}>
+                          {brand}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Cart Drawer */}
-      <Drawer open={isCartDrawerOpen} onClose={toggleCartDrawer}>
-        <DrawerContent className="bg-white text-[#1F1F1F] max-h-[80vh]">
-          <DrawerHeader>
-            <DrawerTitle className="text-lg font-semibold">
-              Your Cart
-            </DrawerTitle>
-            <DrawerDescription>
-              Review your items before checkout.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 space-y-4 overflow-y-auto">
-            {cartItems.length > 0 ? (
-              cartItems.map((item) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center space-x-4 p-4 border rounded-lg hover:shadow-md transition-shadow"
-                >
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={60}
-                    height={60}
-                    className="rounded-md object-cover"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">
-                      ${item.price.toFixed(2)} x {item.quantity}
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Remove
-                  </Button>
-                </motion.div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">Your cart is empty.</p>
-            )}
+            {/* Existing mobile user actions */}
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={toggleUserDropdown}
+                className="p-2 rounded-full hover:bg-white/20 transition-all"
+                aria-label="User menu"
+              >
+                <FaUser size={18} />
+              </button>
+              <button
+                onClick={toggleWishlistDrawer}
+                className="p-2 rounded-full hover:bg-white/20 transition-all relative"
+                aria-label="Open wishlist"
+              >
+                <FaHeart size={18} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistItems.length}
+                </span>
+              </button>
+              <button
+                onClick={toggleCartDrawer}
+                className="p-2 rounded-full hover:bg-white/20 transition-all relative"
+                aria-label="Open cart"
+              >
+                <FaShoppingCart size={18} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              </button>
+            </div>
           </div>
-          <DrawerFooter>
-            {cartItems.length > 0 && (
-              <div className="flex justify-between items-center">
-                <p className="font-medium">Total:</p>
-                <p className="font-bold text-lg">${totalPrice.toFixed(2)}</p>
-              </div>
-            )}
-            <Button
-              className="w-full bg-[#FB7E11] hover:bg-[#E56E00] transition-all"
-              disabled={cartItems.length === 0}
-            >
-              Checkout
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+        </motion.div>
+      )}
+    </AnimatePresence>
 
-      {/* Wishlist Drawer */}
-      <Drawer open={isWishlistDrawerOpen} onClose={toggleWishlistDrawer}>
-        <DrawerContent className="bg-white text-[#1F1F1F] max-h-[80vh]">
-          <DrawerHeader>
-            <DrawerTitle className="text-lg font-semibold">
-              Your Wishlist
-            </DrawerTitle>
-            <DrawerDescription>
-              Your favorite items are saved here.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 space-y-4 overflow-y-auto">
-            {wishlistItems.length > 0 ? (
-              wishlistItems.map((item) => (
+    {/* Enhanced Cart Drawer */}
+    <Drawer open={isCartDrawerOpen} onClose={toggleCartDrawer}>
+      <DrawerContent className="bg-gradient-to-b from-white to-gray-50 text-[#1F1F1F] max-h-[80vh] rounded-t-xl">
+        <DrawerHeader className="border-b border-gray-100">
+          <DrawerTitle className="text-xl font-bold text-[#FB7E11]">
+            Your Shopping Cart
+          </DrawerTitle>
+          <DrawerDescription className="text-gray-600">
+            {cartItems.length} items in your cart
+          </DrawerDescription>
+        </DrawerHeader>
+        
+        <div className="p-4 space-y-4 overflow-y-auto">
+          {cartItems.length > 0 ? (
+            <div className="space-y-4">
+              {cartItems.map((item, index) => (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="hover:shadow-lg transition-shadow"
+                  custom={index}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
                 >
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">{item.name}</CardTitle>
-                      <CardDescription>
-                        ${item.price.toFixed(2)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                  <div className="flex p-4">
+                    <div className="relative w-24 h-24 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={item.image}
                         alt={item.name}
-                        width={80}
-                        height={80}
-                        className="rounded-md object-cover"
+                        fill
+                        className="object-cover p-2"
+                        style={{ objectFit: "contain" }}
                       />
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Button
-                        className="w-full bg-[#FB7E11] hover:bg-[#E56E00] transition-all"
-                        onClick={() => alert(`Added ${item.name} to cart`)}
-                      >
-                        Add to Cart
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                    </div>
+                    
+                    <div className="ml-4 flex-1">
+                      <h3 className="font-bold text-gray-800">{item.name}</h3>
+                      <p className="text-[#FB7E11] font-medium mt-1">${item.price.toFixed(2)}</p>
+                      
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#FB7E11] hover:text-white transition-colors">
+                            <FaMinus size={12} />
+                          </button>
+                          <span className="w-8 text-center font-medium">{item.quantity}</span>
+                          <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[#FB7E11] hover:text-white transition-colors">
+                            <FaPlus size={12} />
+                          </button>
+                        </div>
+                        
+                        <button
+                          className="text-gray-400 hover:text-red-500 transition-colors p-2"
+                        >
+                          <FaTrash size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">
-                Your wishlist is empty.
-              </p>
-            )}
-          </div>
-        </DrawerContent>
-      </Drawer>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <FaShoppingCart size={48} className="mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500 text-lg">Your cart is empty</p>
+              <p className="text-gray-400 mt-2">Add items to get started</p>
+            </div>
+          )}
+        </div>
+        
+        <DrawerFooter className="border-t border-gray-100 bg-white py-4">
+          {cartItems.length > 0 && (
+            <div className="space-y-3 mb-4">
+              <div className="flex justify-between items-center text-sm text-gray-500">
+                <span>Subtotal</span>
+                <span>${totalPrice.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm text-gray-500">
+                <span>Shipping</span>
+                <span>$4.99</span>
+              </div>
+              <div className="flex justify-between items-center font-bold text-lg pt-2 border-t border-dashed border-gray-200">
+                <span>Total</span>
+                <span className="text-[#FB7E11]">${(totalPrice + 4.99).toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+          
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              className="w-full bg-[#FB7E11] hover:bg-[#E56E00] text-white py-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+              disabled={cartItems.length === 0}
+            >
+              Proceed to Checkout
+            </Button>
+          </motion.div>
+          
+          <button
+            onClick={toggleCartDrawer}
+            className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium mt-2"
+          >
+            Continue Shopping
+          </button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
 
-      {/* Navbar */}
-      <HeaderNavbar />
-    </header>
+    {/* Enhanced Wishlist Drawer */}
+    <Drawer open={isWishlistDrawerOpen} onClose={toggleWishlistDrawer}>
+      <DrawerContent className="bg-gradient-to-b from-white to-gray-50 text-[#1F1F1F] max-h-[80vh] rounded-t-xl">
+        <DrawerHeader className="border-b border-gray-100">
+          <DrawerTitle className="text-xl font-bold text-[#FB7E11] flex items-center">
+            <FaHeart className="mr-2 text-red-500" /> Your Wishlist
+          </DrawerTitle>
+          <DrawerDescription className="text-gray-600">
+            {wishlistItems.length} items saved for later
+          </DrawerDescription>
+        </DrawerHeader>
+        
+        <div className="p-4 grid grid-cols-1 gap-4 overflow-y-auto">
+          {wishlistItems.length > 0 ? (
+            wishlistItems.map((item, index) => (
+              <motion.div
+                key={item.id}
+                custom={index}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                className="group"
+              >
+                <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 relative">
+                  <div className="absolute top-3 right-3 z-10">
+                    <button className="w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-colors">
+                      <FaHeart size={14} />
+                    </button>
+                  </div>
+                  
+                  <div className="h-40 bg-gray-50 relative overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-contain p-4 transform group-hover:scale-110 transition-transform duration-500"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                  
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-gray-800 mb-1">{item.name}</h3>
+                    <p className="text-[#FB7E11] font-medium">${item.price.toFixed(2)}</p>
+                    
+                    <div className="mt-4 flex space-x-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 bg-[#FB7E11] hover:bg-[#E56E00] text-white py-2 px-4 rounded-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+                      >
+                        <FaShoppingCart className="mr-2" size={14} />
+                        Add to Cart
+                      </motion.button>
+                      
+                      <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        <FaTrash size={14} className="text-gray-500" />
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))
+          ) : (
+            <div className="py-8 text-center">
+              <FaHeart size={48} className="mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500 text-lg">Your wishlist is empty</p>
+              <p className="text-gray-400 mt-2">Save items you love for later</p>
+            </div>
+          )}
+        </div>
+        
+        <DrawerFooter className="border-t border-gray-100 bg-white py-4">
+          {wishlistItems.length > 0 && (
+            <Button
+              className="w-full bg-gray-800 hover:bg-black text-white py-5 rounded-xl font-bold text-base shadow-lg hover:shadow-xl transition-all"
+            >
+              Add All to Cart
+            </Button>
+          )}
+          
+          <button
+            onClick={toggleWishlistDrawer}
+            className="w-full text-gray-500 hover:text-gray-700 text-sm font-medium mt-2"
+          >
+            Continue Shopping
+          </button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+    
+    {/* Navbar */}
+    <HeaderNavbar />
+  </header>
   );
-};
+}
 
 export default Header;

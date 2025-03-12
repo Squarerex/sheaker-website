@@ -1,8 +1,14 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaShoppingCart, FaArrowRight, FaStar, FaTimes, FaArrowUp } from "react-icons/fa";
+import { FaShoppingCart, FaArrowRight, FaStar, FaTimes, FaArrowUp, FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 // Sample product data (replace with API fetch)
 interface Product {
@@ -10,6 +16,7 @@ interface Product {
   name: string;
   price: number;
   image: string;
+  images: string[];
   description: string;
   rating: number;
   category: string;
@@ -18,12 +25,199 @@ interface Product {
 }
 
 const products: Product[] = [
-  { id: 1, name: "Luxury Smartwatch", price: 299.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "A premium smartwatch.", rating: 4.9, category: "Electronics", isBestSeller: true, isNewArrival: false },
-  { id: 2, name: "Gold-Tone Earbuds", price: 129.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "Elegant earbuds.", rating: 4.7, category: "Electronics", isBestSeller: false, isNewArrival: true },
-  { id: 3, name: "Designer Backpack", price: 179.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "Stylish backpack.", rating: 4.8, category: "Fashion", isBestSeller: true, isNewArrival: false },
-  { id: 4, name: "Elegant Sunglasses", price: 99.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "Timeless shades.", rating: 4.6, category: "Fashion", isBestSeller: false, isNewArrival: true },
-  { id: 5, name: "Premium Hoodie", price: 89.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "Soft luxury hoodie.", rating: 4.5, category: "Fashion", isBestSeller: false, isNewArrival: false },
-  { id: 6, name: "Elite Speaker", price: 149.99, image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid", description: "High-quality sound.", rating: 4.7, category: "Electronics", isBestSeller: true, isNewArrival: true },
+  {
+    id: 1,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 2,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 3,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 4,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 5,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 6,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 7,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 8,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 9,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 10,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 11,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+  {
+    id: 12,
+    name: "Luxury Smartwatch",
+    price: 299.99,
+    image: "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    description: "A premium smartwatch.",
+    rating: 4.9,
+    category: "Electronics",
+    isBestSeller: true,
+    isNewArrival: false,
+  },
+ 
 ];
 
 // Animation variants
@@ -92,26 +286,6 @@ const AllProductsPage = () => {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-5xl md:text-7xl font-extrabold text-[#E0E1DD] tracking-tight">
-            All <motion.span
-              initial={{ y: 10 }}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="text-[#FFB703] drop-shadow-[0_0_10px_#FFB703]"
-            >
-              Products
-            </motion.span>
-          </h1>
-          <p className="text-[#E0E1DD] text-lg mt-4 opacity-80">Explore our vast collection of premium goods</p>
-        </motion.div> */}
-
         {/* Top Filter Bar */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -196,7 +370,6 @@ const AllProductsPage = () => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    onClick={() => setSelectedProduct(product)}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer brightness-90 group-hover:brightness-100"
                   />
                   <motion.div
@@ -212,6 +385,35 @@ const AllProductsPage = () => {
                     <FaStar />
                     <span className="text-sm font-medium">{product.rating}</span>
                   </motion.div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute bottom-4 right-4 bg-[#FFB703] text-[#1B263B] p-2 rounded-full shadow-md"
+                      >
+                        <FaSearch size={16} />
+                      </motion.button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl">
+                      <Swiper
+                        navigation
+                        pagination={{ clickable: true }}
+                        modules={[Navigation, Pagination]}
+                        className="w-full h-full"
+                      >
+                        {product.images.map((img, idx) => (
+                          <SwiperSlide key={idx}>
+                            <img
+                              src={img}
+                              alt={`${product.name} - Image ${idx + 1}`}
+                              className="w-full h-full object-contain"
+                            />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <div className="p-6 space-y-3">
                   <h3 className="text-xl font-bold text-[#E0E1DD] group-hover:text-[#FFB703] transition-colors duration-300">

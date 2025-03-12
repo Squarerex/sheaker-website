@@ -4,7 +4,7 @@ import { FaArrowRight, FaShippingFast, FaTags } from "react-icons/fa";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#121212]">
+    <section className="relative min-h-screen flex items-center justify-center top-32 overflow-hidden bg-[#121212]">
       {/* Enhanced Background */}
       <div className="absolute inset-0 z-0">
         {/* Dual Gradient */}
