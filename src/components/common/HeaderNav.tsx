@@ -602,7 +602,7 @@ const HeaderNavbar = () => {
                           className="flex justify-center mt-6"
                         >
                           <Link
-                            href={`/category/${selectedCategory.name
+                            href={`/products/categories/${selectedCategory.name
                               .toLowerCase()
                               .replace(/\s+/g, "-")}`}
                           >

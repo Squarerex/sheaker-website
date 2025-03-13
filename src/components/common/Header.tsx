@@ -120,7 +120,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-[#FB7E11] to-[#E56E00] text-white shadow-lg fixed w-full top-0 z-50">
+    <header className="bg-gradient-to-r from-[#FB7E11] to-[#E56E00] text-white shadow-lg fixed w-full top-0 z-90">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="flex items-center focus:outline-none rounded">

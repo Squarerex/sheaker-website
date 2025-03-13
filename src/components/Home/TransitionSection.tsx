@@ -29,7 +29,7 @@ const TransitionSection = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-b from-[#666666] to-[#999999] py-16 overflow-hidden mt-22">
+    <section className="relative bg-gradient-to-b from-[#666666] to-[#999999] py-16 overflow-hidden mt-32">
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div

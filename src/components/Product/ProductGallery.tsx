@@ -3,121 +3,218 @@ import { motion } from "framer-motion";
 import { FaHeart, FaShoppingCart, FaStar, FaSort, FaEye } from "react-icons/fa";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Static product data
 const products = [
   {
     id: 1,
     name: "Product 1",
-    image:
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 49.99,
     rating: 4.5,
     amountSold: 120,
+    description: "This is a description for Product 1.",
   },
   {
     id: 2,
     name: "Product 2",
-    image:
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 29.99,
     rating: 3.8,
     amountSold: 85,
+    description: "This is a description for Product 2.",
   },
   {
     id: 3,
-    name: "Product 3",
-    image:
+    name: "Product 1",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 99.99,
-    rating: 4.9,
-    amountSold: 200,
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 49.99,
+    rating: 4.5,
+    amountSold: 120,
+    description: "This is a description for Product 1.",
   },
   {
     id: 4,
-    name: "Product 4",
-    image:
+    name: "Product 2",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 19.99,
-    rating: 4.2,
-    amountSold: 150,
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 29.99,
+    rating: 3.8,
+    amountSold: 85,
+    description: "This is a description for Product 2.",
   },
   {
     id: 5,
-    name: "Product 5",
-    image:
+    name: "Product 1",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 49.99,
     rating: 4.5,
     amountSold: 120,
+    description: "This is a description for Product 1.",
   },
   {
     id: 6,
-    name: "Product 6",
-    image:
+    name: "Product 2",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 29.99,
     rating: 3.8,
     amountSold: 85,
+    description: "This is a description for Product 2.",
   },
   {
     id: 7,
-    name: "Product 7",
-    image:
+    name: "Product 1",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 99.99,
-    rating: 4.9,
-    amountSold: 200,
-  },
-  {
-    id: 8,
-    name: "Product 8",
-    image:
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 19.99,
-    rating: 4.2,
-    amountSold: 150,
-  },
-  {
-    id: 9,
-    name: "Product 9",
-    image:
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 49.99,
     rating: 4.5,
     amountSold: 120,
+    description: "This is a description for Product 1.",
   },
   {
-    id: 10,
-    name: "Product 10",
-    image:
+    id: 8,
+    name: "Product 2",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
     price: 29.99,
     rating: 3.8,
     amountSold: 85,
+    description: "This is a description for Product 2.",
+  },
+  {
+    id: 9,
+    name: "Product 1",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 49.99,
+    rating: 4.5,
+    amountSold: 120,
+    description: "This is a description for Product 1.",
+  },
+  {
+    id: 10,
+    name: "Product 2",
+    images: [
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 29.99,
+    rating: 3.8,
+    amountSold: 85,
+    description: "This is a description for Product 2.",
   },
   {
     id: 11,
-    name: "Product 11",
-    image:
+    name: "Product 1",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 99.99,
-    rating: 4.9,
-    amountSold: 200,
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 49.99,
+    rating: 4.5,
+    amountSold: 120,
+    description: "This is a description for Product 1.",
   },
   {
     id: 12,
-    name: "Product 12",
-    image:
+    name: "Product 2",
+    images: [
       "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
-    price: 19.99,
-    rating: 4.2,
-    amountSold: 150,
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+      "https://img.freepik.com/free-photo/3d-render-vs-company-metal-letter-logo-pen-tool-created-clipping-path-included-jpeg-easy-composite_460848-7192.jpg?ga=GA1.1.343461677.1733769822&semt=ais_hybrid",
+    ],
+    price: 29.99,
+    rating: 3.8,
+    amountSold: 85,
+    description: "This is a description for Product 2.",
   },
+
 ];
+
+// Magnified View Component
+const MagnifiedView = ({ product, onClose }: { product: any; onClose: () => void }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleNext = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 max-w-3xl w-full">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">{product.name}</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            &times;
+          </button>
+        </div>
+        <div className="relative">
+          <img
+            src={product.images[currentImageIndex]}
+            alt={product.name}
+            className="w-full h-96 object-cover rounded-lg"
+          />
+          <button
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md"
+          >
+            &lt;
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md"
+          >
+            &gt;
+          </button>
+        </div>
+        <p className="mt-4 text-gray-600">{product.description}</p>
+      </div>
+    </div>
+  );
+};
 
 const ProductGallery = () => {
   const [sortBy, setSortBy] = useState("default"); // State for sorting products
+  const [magnifiedProduct, setMagnifiedProduct] = useState<any>(null); // State for magnified view
 
   // Sorting logic
   const sortedProducts = [...products].sort((a, b) => {
@@ -153,9 +250,9 @@ const ProductGallery = () => {
     console.log(`Added Product ${productId} to wishlist`);
   };
 
-  const handleQuickView = (e: React.MouseEvent, productId: number) => {
+  const handleQuickView = (e: React.MouseEvent, product: any) => {
     e.stopPropagation(); // Prevent Link redirect
-    console.log(`Quick view for Product ${productId}`);
+    setMagnifiedProduct(product);
   };
 
   return (
@@ -211,7 +308,7 @@ const ProductGallery = () => {
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedProducts.map((product) => (
-            <Link key={product.id} href={`/products/product-details/${product.id}`} passHref>
+            <div key={product.id} className="relative">
               <motion.div
                 variants={cardVariants}
                 whileHover={{
@@ -221,25 +318,28 @@ const ProductGallery = () => {
                 className="bg-white rounded-xl shadow-lg overflow-hidden transition-all cursor-pointer"
               >
                 {/* Product Image */}
-                <div className="relative h-56 w-full">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    loading="lazy"
-                  />
-                  {/* Wishlist Icon */}
-                  <motion.div
-                    whileHover={{ scale: 1.2 }}
-                    onClick={(e) => handleAddToWishlist(e, product.id)}
-                    className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md"
-                  >
-                    <FaHeart
-                      className="text-gray-400 hover:text-[#FB7E11] transition-all"
-                      aria-label={`Add ${product.name} to wishlist`}
+                <Link href={`/products/product-details/${product.id}`} passHref>
+                  <div className="relative h-56 w-full">
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      loading="lazy"
                     />
-                  </motion.div>
-                </div>
+                  </div>
+                </Link>
+
+                {/* Wishlist Icon */}
+                <motion.div
+                  whileHover={{ scale: 1.2 }}
+                  onClick={(e) => handleAddToWishlist(e, product.id)}
+                  className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow-md"
+                >
+                  <FaHeart
+                    className="text-gray-400 hover:text-[#FB7E11] transition-all"
+                    aria-label={`Add ${product.name} to wishlist`}
+                  />
+                </motion.div>
 
                 {/* Product Details */}
                 <div className="p-5">
@@ -270,7 +370,7 @@ const ProductGallery = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center mt-4 space-x-3" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center mt-4 space-x-3">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -284,7 +384,7 @@ const ProductGallery = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={(e) => handleQuickView(e, product.id)}
+                      onClick={(e) => handleQuickView(e, product)}
                       className="p-2 bg-[#FB7E11] text-white rounded-lg hover:bg-[#E56E00] transition-all focus:outline-none focus:ring-2 focus:ring-[#FB7E11]"
                       aria-label={`Quick view of ${product.name}`}
                     >
@@ -293,10 +393,15 @@ const ProductGallery = () => {
                   </div>
                 </div>
               </motion.div>
-            </Link>
+            </div>
           ))}
         </div>
       </motion.div>
+
+      {/* Magnified View */}
+      {magnifiedProduct && (
+        <MagnifiedView product={magnifiedProduct} onClose={() => setMagnifiedProduct(null)} />
+      )}
     </section>
   );
 };
