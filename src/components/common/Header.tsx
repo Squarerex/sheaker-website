@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   FaBars,
@@ -32,11 +32,7 @@ import {
 } from "@/components/ui/drawer";
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   Select,
@@ -59,6 +55,10 @@ const Header = () => {
     brand: "",
     query: ""
   });
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+
+  // Demo data for autocomplete
+  const demoData = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -87,8 +87,22 @@ const Header = () => {
     0
   );
 
-  const handleSearchFilterChange = (key:string, value: string) => {
+  const handleSearchFilterChange = (key: string, value: string) => {
     setSearchFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Handle search input change for autocomplete
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchFilters(prev => ({ ...prev, query }));
+    if (query.length > 0) {
+      const filteredSuggestions = demoData.filter(item =>
+        item.toLowerCase().includes(query.toLowerCase())
+      );
+      setSearchSuggestions(filteredSuggestions);
+    } else {
+      setSearchSuggestions([]);
+    }
   };
 
   // Animation variants
@@ -120,7 +134,96 @@ const Header = () => {
           />
         </Link>
 
-        {/* Search Bar with Filters - Desktop */}
+        {/* Search Bar with Autocomplete & Filters - Desktop */}
+        <div className="hidden md:flex items-center flex-1 ml-[10%]">
+          <div className="relative w-full max-w-2xl">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full px-4 py-2 rounded-full text-[#1F1F1F] bg-white focus:outline-none focus:ring-2 focus:ring-[#0836C1] shadow-sm transition-all"
+              aria-label="Search for products"
+              value={searchFilters.query}
+              onChange={handleSearchInputChange}
+            />
+            <button
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4D0A51] hover:text-[#0836C1]"
+              onClick={toggleFilter}
+            >
+              <FaFilter size={20} />
+            </button>
+            {searchSuggestions.length > 0 && (
+              <div className="absolute z-90 w-full mt-2 bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                {searchSuggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-[#1F1F1F]"
+                    onClick={() => {
+                      setSearchFilters(prev => ({ ...prev, query: suggestion }));
+                      setSearchSuggestions([]);
+                    }}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Filters */}
+          {isFilterOpen && (
+            <div className="absolute top-16 bg-white p-4 rounded-lg shadow-lg w-full max-w-2xl z-40">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Select
+                  value={searchFilters.category}
+                  onValueChange={(value) => handleSearchFilterChange("category", value)}
+                >
+                  <SelectTrigger className="bg-white text-[#1F1F1F]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat.toLowerCase()}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={searchFilters.priceRange}
+                  onValueChange={(value) => handleSearchFilterChange("priceRange", value)}
+                >
+                  <SelectTrigger className="bg-white text-[#1F1F1F]">
+                    <SelectValue placeholder="Price Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceRanges.map((range) => (
+                      <SelectItem key={range} value={range.toLowerCase()}>
+                        {range}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={searchFilters.brand}
+                  onValueChange={(value) => handleSearchFilterChange("brand", value)}
+                >
+                  <SelectTrigger className="bg-white text-[#1F1F1F]">
+                    <SelectValue placeholder="Brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand} value={brand.toLowerCase()}>
+                        {brand}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Dropdown, Wishlist, Cart */}
         <div className="hidden md:flex items-center space-x-4">
           {/* User Dropdown */}
           <div className="relative">
@@ -272,7 +375,7 @@ const Header = () => {
                   className="w-full px-4 py-2 rounded-full text-[#1F1F1F] bg-white focus:outline-none focus:ring-2 focus:ring-[#0836C1] shadow-sm transition-all"
                   aria-label="Search for products"
                   value={searchFilters.query}
-                  onChange={(e) => handleSearchFilterChange("query", e.target.value)}
+                  onChange={handleSearchInputChange}
                 />
                 <button
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#4D0A51] hover:text-[#0836C1]"
@@ -281,6 +384,23 @@ const Header = () => {
                   <FaFilter size={20} />
                 </button>
               </div>
+
+              {searchSuggestions.length > 0 && (
+                <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {searchSuggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-[#1F1F1F]"
+                      onClick={() => {
+                        setSearchFilters(prev => ({ ...prev, query: suggestion }));
+                        setSearchSuggestions([]);
+                      }}
+                    >
+                      {suggestion}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {isFilterOpen && (
                 <div className="space-y-3 bg-white/10 p-3 rounded-lg">
